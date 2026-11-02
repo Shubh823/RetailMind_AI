@@ -23,7 +23,7 @@ from sklearn.metrics import (
 # 1. Load dataset
 ROOT_DIR = Path(__file__).resolve().parent.parent
 
-DATA_PATH = ROOT_DIR / "data" / "raw" / "WA_Fn-UseC_-Telco-Customer-Churn.csv"
+DATA_PATH = ROOT_DIR / "data" / "WA_Fn-UseC_-Telco-Customer-Churn.csv"
 
 df = pd.read_csv(DATA_PATH)
 
