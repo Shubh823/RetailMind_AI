@@ -5,7 +5,7 @@ venv/
 .env
 
 # Dataset
-data/raw/*.csv
+data/*.csv
 
 # Trained models
 models/*.pkl

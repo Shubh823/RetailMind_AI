@@ -1,94 +1,75 @@
-# RetailMind AI – Customer Churn Prediction Platform
+# RetailMind AI – Customer Churn Prediction
 
-An end-to-end Machine Learning platform that predicts customer churn using multiple classification algorithms, reusable preprocessing pipelines, model evaluation and model persistence.
+An end-to-end Machine Learning project that predicts customer churn using customer demographics, account information, subscribed services, and billing details.
 
-RetailMind AI is being developed incrementally as part of the LTM AI Services learning track, with each day's implementation extending the same project and codebase.
-
----
-
-## 1. Project Overview
-
-Customer churn occurs when customers stop using a company's products or services.
-
-For telecom companies, identifying customers who are likely to leave is important because it allows businesses to take proactive retention measures.
-
-RetailMind AI uses historical customer information to predict whether a customer is likely to churn.
-
-The project currently implements:
-
-- Exploratory Data Analysis (EDA)
-- Data cleaning and preprocessing
-- End-to-end Machine Learning pipelines
-- Multiple classification algorithms
-- Model evaluation and comparison
-- Model persistence using Joblib
-- Reusable customer prediction functionality
+The project follows a structured machine learning workflow, including Exploratory Data Analysis (EDA), data preprocessing, model training, model comparison, hyperparameter tuning, cross-validation, and model evaluation.
 
 ---
 
-## 2. Project Objectives
+## Project Objectives
 
-1. Analyse customer data and identify patterns associated with churn.
-2. Build a reusable data preprocessing pipeline.
-3. Develop a baseline Logistic Regression model.
-4. Experiment with Decision Tree, Random Forest and SVM.
-5. Compare models using classification metrics.
-6. Select the best-performing experimental model.
-7. Persist trained models for future predictions.
-8. Extend the platform through hyperparameter tuning and model optimisation.
+- Analyze customer data to identify churn patterns.
+- Clean and preprocess raw customer information.
+- Build reusable preprocessing pipelines.
+- Train multiple machine learning classification models.
+- Compare models using appropriate evaluation metrics.
+- Optimize model performance using GridSearchCV.
+- Analyze bias and variance using learning curves.
+- Save trained models for future predictions.
 
 ---
 
-## 3. Technologies Used
+## Technology Stack
 
 | Technology | Purpose |
 |---|---|
-| Python | Core programming language |
-| Pandas | Data loading and analysis |
-| Scikit-learn | Machine Learning and preprocessing |
-| Joblib | Model persistence |
-| Git | Version control |
-| GitHub | Source code management |
+| Python | Programming language |
+| Pandas | Data manipulation and analysis |
+| NumPy | Numerical operations |
+| Scikit-learn | Machine learning and preprocessing |
+| Matplotlib | Data visualization and learning curves |
+| Joblib | Model serialization |
+| Git & GitHub | Version control |
 
 ---
 
-## 4. Dataset Information
+## Dataset Information
 
 **Dataset:** Telco Customer Churn
 
-**Source:** [Kaggle – Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn)
+**Source:** Kaggle – Blastchar Telco Customer Churn Dataset
 
-**Original dataset statistics:**
+The dataset contains customer information from a telecommunications company.
 
-| Attribute | Value |
+| Property | Value |
 |---|---:|
 | Total records | 7,043 |
 | Total columns | 21 |
 | Numerical features | 4 |
 | Categorical features | 15 |
-| Target column | Churn |
-| Churned customers | 1,869 |
-| Non-churned customers | 5,174 |
+| Target variable | Churn |
+| Missing TotalCharges values after conversion | 11 |
+| Duplicate records | 0 |
 
-### Target Variable
+### Target Distribution
 
 The target variable is `Churn`.
 
-- `No` → 0 (Customer stays)
-- `Yes` → 1 (Customer leaves)
+- `No` → 0
+- `Yes` → 1
 
-### Class Distribution
-
-| Class | Customers | Percentage |
+| Churn Status | Customers | Percentage |
 |---|---:|---:|
-| No Churn | 5,174 | 73.46% |
-| Churn | 1,869 | 26.54% |
+| No | 5,174 | 73.46% |
+| Yes | 1,869 | 26.54% |
 
-The dataset contains an imbalance between churn and non-churn customers. Therefore, recall, precision and ROC-AUC are important evaluation metrics.
+The dataset is imbalanced, with fewer customers leaving the company than staying.
+
+Therefore, Recall is an important evaluation metric because identifying customers who may churn is a primary objective.
 
 ---
 
-## 5. Project Structure
+## Project Structure
 
 ```text
 RetailMind_AI/
@@ -96,60 +77,68 @@ RetailMind_AI/
 ├── data/
 │   └── WA_Fn-UseC_-Telco-Customer-Churn.csv
 │
-├── pipeline/
+├── notebooks/
 │   └── churn_analysis.py
 │
 ├── src/
 │   ├── __init__.py
 │   ├── preprocessing.py
 │   ├── train.py
+│   ├── predict.py
 │   ├── compare_models.py
-│   └── predict.py
+│   ├── tune_models.py
+│   └── learning_analysis.py
 │
 ├── models/
 │   ├── churn_pipeline.joblib
 │   ├── churn_comparison_champion.joblib
-│   └── day2_model_comparison.csv
-│
-├── notebooks/
+│   ├── churn_v3.joblib
+│   ├── day2_model_comparison.csv
+│   ├── day3_tuning_results.csv
+│   └── learning_curve.png
 │
 ├── README.md
 ├── requirements.txt
 └── .gitignore
 ```
 
+*Note: The learning curve image is generated when the learning analysis script runs successfully.*
+
 ---
 
-# Day 1 – End-to-End ML Pipeline
+# Day 1 – Exploratory Data Analysis and Baseline Model
 
-## 6. Exploratory Data Analysis
+## 1. Exploratory Data Analysis
 
-The first increment focuses on understanding the Telco Customer Churn dataset.
+Performed initial dataset analysis to understand:
 
-The analysis includes:
+- Dataset dimensions and structure.
+- Numerical and categorical columns.
+- Missing values.
+- Duplicate records.
+- Customer churn distribution.
+- Data types and feature distributions.
 
-- Dataset dimensions and structure
-- Column data types
-- Statistical summaries
-- Missing value identification
-- Duplicate record detection
-- Target variable distribution
-- Categorical feature inspection
-- Data type conversion for `TotalCharges`
-
-### Important Finding
+### Data Cleaning
 
 The `TotalCharges` column was initially stored as a string.
 
-After converting it into numeric values using Pandas, 11 missing values were identified.
+It was converted into a numerical column using:
 
-These missing values are handled through median imputation in the Machine Learning pipeline.
+```python
+df["TotalCharges"] = pd.to_numeric(
+    df["TotalCharges"],
+    errors="coerce"
+)
+```
 
----
+This conversion identified 11 missing values.
 
-## 7. Data Preprocessing
+The `customerID` column was excluded from model training because it is an identifier rather than a meaningful predictive feature.
 
-A reusable preprocessing module was created in `src/preprocessing.py`.
+## 2. Data Preprocessing
+
+A reusable preprocessing pipeline was developed.
 
 ### Numerical Features
 
@@ -160,44 +149,59 @@ A reusable preprocessing module was created in `src/preprocessing.py`.
 
 Operations:
 
-1. Missing value imputation using `SimpleImputer(strategy="median")`.
-2. Feature scaling using `StandardScaler`.
+1. Missing value imputation using median.
+2. Feature scaling using StandardScaler.
 
 ### Categorical Features
 
+- gender
+- Partner
+- Dependents
+- PhoneService
+- MultipleLines
+- InternetService
+- OnlineSecurity
+- OnlineBackup
+- DeviceProtection
+- TechSupport
+- StreamingTV
+- StreamingMovies
+- Contract
+- PaperlessBilling
+- PaymentMethod
+
 Operations:
 
-1. Missing value imputation using `SimpleImputer(strategy="most_frequent")`.
-2. Categorical encoding using `OneHotEncoder(handle_unknown="ignore")`.
+1. Missing value imputation using most frequent value.
+2. One-hot encoding using OneHotEncoder.
 
-### ColumnTransformer
+### Train-Test Split
 
-`ColumnTransformer` combines numerical and categorical preprocessing.
+| Dataset | Records |
+|---|---:|
+| Training | 5,634 |
+| Testing | 1,409 |
+| Total | 7,043 |
 
-The complete preprocessing workflow is integrated with the classifier using Scikit-learn's `Pipeline`.
+Configuration:
 
-This ensures consistent transformations during both training and prediction and prevents preprocessing data leakage.
+```python
+train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y
+)
+```
 
----
+Stratification preserves the approximate target-class distribution in both sets.
 
-## 8. Day 1 – Logistic Regression Baseline
+## 3. Baseline Model – Logistic Regression
 
-A Logistic Regression classifier was trained as the platform's first baseline model.
+A Logistic Regression classifier was trained using the shared preprocessing pipeline.
 
-### Experimental Setup
-
-| Parameter | Value |
-|---|---|
-| Algorithm | Logistic Regression |
-| Training data | 80% |
-| Testing data | 20% |
-| Training records | 5,634 |
-| Testing records | 1,409 |
-| Random state | 42 |
-| Maximum iterations | 1,000 |
-| Stratification | Enabled |
-
-### Baseline Evaluation Results
+### Evaluation Results
 
 | Metric | Score |
 |---|---:|
@@ -213,53 +217,62 @@ A Logistic Regression classifier was trained as the platform's first baseline mo
  [165 209]]
 ```
 
-### Baseline Model Persistence
-
-The complete fitted preprocessing and classification pipeline is saved using Joblib.
+The baseline model was saved as:
 
 ```text
 models/churn_pipeline.joblib
 ```
 
-This allows the model to be loaded and reused without retraining.
+## 4. Prediction Pipeline
+
+A reusable prediction function was implemented in `src/predict.py`.
+
+The function:
+
+- Loads the saved model.
+- Accepts customer information.
+- Predicts whether the customer is likely to churn.
+- Returns the predicted class and churn probability.
+
+Example output:
+
+```text
+Model loaded successfully!
+
+========== CUSTOMER PREDICTION ==========
+{'prediction': 'Yes', 'churn_probability': 0.6801}
+```
+
+The predicted probability is a model estimate, not a guarantee of actual customer behaviour.
 
 ---
 
-# Day 2 – Multi-Model Comparison
+# Day 2 – Model Comparison
 
-## 9. Objective
+## 1. Objective
 
-The second increment extends the baseline implementation by experimenting with additional classification algorithms.
+The objective of Day 2 was to evaluate different classification algorithms using identical training and testing datasets.
 
-The objective is to identify a better-performing model for predicting customer churn.
+The following models were trained:
 
-### Algorithms Evaluated
+- Logistic Regression
+- Decision Tree
+- Random Forest
+- Support Vector Machine (SVM)
 
-1. Logistic Regression – Day 1 baseline
-2. Decision Tree Classifier
-3. Random Forest Classifier
-4. Support Vector Machine (SVM)
+All models used the same reusable preprocessing strategy.
 
-### Experimental Setup
+## 2. Model Evaluation
 
-All models use:
+The models were evaluated using:
 
-- The same Telco Customer Churn dataset.
-- The same 80:20 train-test split.
-- The same random state of 42.
-- Stratified train-test splitting.
-- The same numerical and categorical preprocessing strategy.
+- Accuracy
+- Precision
+- Recall
+- ROC-AUC
+- Confusion Matrix
 
-### Algorithm Configuration
-
-| Algorithm | Configuration |
-|---|---|
-| Decision Tree | `random_state=42` |
-| Random Forest | `n_estimators=100`, `random_state=42` |
-| SVM | RBF kernel, probability estimation enabled |
-| Logistic Regression | `max_iter=1000` |
-
-### Model Comparison Results
+### Model Comparison
 
 | Model | Accuracy | Precision | Recall | ROC-AUC |
 |---|---:|---:|---:|---:|
@@ -268,170 +281,339 @@ All models use:
 | Random Forest | 77.79% | 60.34% | 47.59% | 81.62% |
 | SVM | 79.13% | 64.18% | 48.40% | 79.05% |
 
-### Day 2 Champion Selection
+## 3. Day 2 Champion Selection
 
-Decision Tree was selected as the Day 2 experimental champion among the three newly introduced algorithms.
+Among the three newly evaluated algorithms, Decision Tree achieved the highest churn recall of 50.53%.
 
-It achieved the highest churn-class recall of 50.53%.
+However, Logistic Regression remained the strongest overall model compared with the Day 2 candidates, achieving 55.88% recall and 84.19% ROC-AUC.
 
-However, the Day 1 Logistic Regression baseline achieved a higher recall of 55.88% and ROC-AUC of 84.19%.
+The Decision Tree comparison champion was saved as:
 
-Therefore, Logistic Regression remains the overall best-performing model at this stage.
+```text
+models/churn_comparison_champion.joblib
+```
 
-### Business Interpretation
+The comparison results were saved as:
 
-The primary business objective is to identify customers who are likely to leave the telecom service.
-
-Recall is particularly important because failing to identify a potential churner can result in customer loss.
-
-The Day 2 experiment demonstrates that more complex algorithms do not necessarily outperform simpler baseline models.
-
-Further model optimisation and hyperparameter tuning will be explored in the next increment.
-
-### Day 2 Saved Artifacts
-
-| File | Description |
-|---|---|
-| `churn_comparison_champion.joblib` | Decision Tree experimental champion |
-| `day2_model_comparison.csv` | Performance comparison of all four models |
-| `churn_pipeline.joblib` | Original Day 1 Logistic Regression baseline |
+```text
+models/day2_model_comparison.csv
+```
 
 ---
 
-## 10. Prediction Service
+# Day 3 – Hyperparameter Tuning and Model Optimization
 
-The project provides a reusable prediction helper in `src/predict.py`.
+## 1. Objective
 
-The helper loads the persisted ML pipeline using Joblib and accepts new customer information as a Python dictionary.
+Day 3 focused on improving model performance through hyperparameter tuning and cross-validation.
 
-### Example
+The main activities included:
+
+- Defining hyperparameter grids.
+- Applying GridSearchCV.
+- Performing 5-fold stratified cross-validation.
+- Comparing training and validation scores.
+- Evaluating tuned models on the holdout test set.
+- Selecting and saving a tuned champion model.
+- Analyzing bias and variance using learning curves.
+
+## 2. GridSearchCV
+
+GridSearchCV was used to find suitable hyperparameter combinations for each candidate model.
+
+Configuration:
 
 ```python
-result = predict(customer_data)
+GridSearchCV(
+    estimator=pipeline,
+    param_grid=param_grid,
+    scoring="recall",
+    cv=5,
+    n_jobs=-1,
+    verbose=1,
+    return_train_score=True
+)
 ```
 
-Example output:
+### Cross-Validation Strategy
+
+StratifiedKFold was configured with:
+
+```python
+StratifiedKFold(
+    n_splits=5,
+    shuffle=True,
+    random_state=42
+)
+```
+
+Each model was trained and evaluated across five folds.
+
+Recall was selected as the primary cross-validation scoring metric because detecting customers who may churn is the main project objective.
+
+## 3. Hyperparameter Grids
+
+### Decision Tree
 
 ```python
 {
-    "prediction": "Yes",
-    "churn_probability": 0.6801
+    "classifier__max_depth": [3, 5, 10, None],
+    "classifier__min_samples_split": [2, 10, 20],
+    "classifier__min_samples_leaf": [1, 5, 10]
 }
 ```
 
-The example customer has an estimated churn probability of 68.01%.
+### Random Forest
 
-The prediction is an estimate generated by the trained model, not a guarantee of future customer behaviour.
+```python
+{
+    "classifier__n_estimators": [100, 200],
+    "classifier__max_depth": [5, 10, None],
+    "classifier__min_samples_leaf": [1, 5],
+    "classifier__max_features": ["sqrt"]
+}
+```
+
+### Support Vector Machine
+
+SVM used CalibratedClassifierCV with an underlying SVC estimator.
+
+```python
+{
+    "classifier__estimator__C": [0.1, 1, 10],
+    "classifier__estimator__kernel": ["linear", "rbf"],
+    "classifier__estimator__gamma": ["scale", "auto"]
+}
+```
+
+## 4. Best Hyperparameters
+
+### Decision Tree
+
+```python
+{
+    "classifier__max_depth": 5,
+    "classifier__min_samples_leaf": 10,
+    "classifier__min_samples_split": 2
+}
+```
+
+### Random Forest
+
+```python
+{
+    "classifier__max_depth": 10,
+    "classifier__max_features": "sqrt",
+    "classifier__min_samples_leaf": 5,
+    "classifier__n_estimators": 100
+}
+```
+
+### SVM
+
+```python
+{
+    "classifier__estimator__C": 0.1,
+    "classifier__estimator__gamma": "scale",
+    "classifier__estimator__kernel": "linear"
+}
+```
+
+## 5. Tuned Model Comparison
+
+| Model | Best CV Recall | Training CV Recall | Test Accuracy | Test Precision | Test Recall | Test ROC-AUC |
+|---|---:|---:|---:|---:|---:|---:|
+| Decision Tree | 0.5144 | 0.5530 | 0.7984 | 0.6347 | **0.5668** | 0.8282 |
+| Random Forest | **0.5157** | 0.6077 | **0.8084** | **0.6793** | 0.5267 | **0.8418** |
+| SVM | 0.5144 | 0.5189 | 0.7970 | 0.6467 | 0.5187 | 0.8287 |
+
+## 6. Training vs Validation Performance
+
+Training and validation recall were compared to understand possible overfitting.
+
+| Model | Training Recall | Validation Recall | Difference |
+|---|---:|---:|---:|
+| Decision Tree | 0.5530 | 0.5144 | 0.0386 |
+| Random Forest | 0.6077 | 0.5157 | 0.0920 |
+| SVM | 0.5189 | 0.5144 | 0.0045 |
+
+### Observations
+
+- Decision Tree shows a relatively small training-validation gap.
+- Random Forest shows a larger gap, suggesting possible overfitting.
+- SVM has very similar training and validation recall, indicating more consistent but comparatively modest performance.
+
+These differences are useful indicators, but they should be interpreted together with learning curves and other evaluation metrics.
+
+## 7. Tuned Champion Model
+
+Random Forest was selected as the Day 3 tuned champion based on its highest cross-validation recall.
+
+It also achieved the highest ROC-AUC among the three tuned models.
+
+### Important Results
+
+- Best CV Recall: 51.57%
+- Test Accuracy: 80.84%
+- Test Precision: 67.93%
+- Test Recall: 52.67%
+- Test ROC-AUC: 84.18%
+
+The tuned champion was saved as:
+
+```text
+models/churn_v3.joblib
+```
+
+The tuning results were exported to:
+
+```text
+models/day3_tuning_results.csv
+```
+
+**Metric-specific observation:** Decision Tree achieved the highest holdout test recall (56.68%), while Random Forest achieved the highest cross-validation recall and test ROC-AUC. The selected champion is based on cross-validation performance, not on having the highest score for every metric.
 
 ---
 
-## 11. Installation and Execution
+## 8. Learning Curve and Bias-Variance Analysis
 
-### Prerequisites
+The learning curve is used to understand how model performance changes as the training dataset size increases.
 
-- Python
-- Git
-- VS Code or another Python IDE
+It compares:
 
-### Step 1: Clone the Repository
+- Training Recall
+- Validation Recall
+
+The analysis is implemented in:
+
+```text
+src/learning_analysis.py
+```
+
+The script uses Scikit-learn's `learning_curve()` function and generates a visualization.
+
+### Learning Curve Interpretation
+
+| Observation | Possible Interpretation |
+|---|---|
+| High training score, low validation score | Overfitting / high variance |
+| Low training score, low validation score | Underfitting / high bias |
+| Both scores improve as data increases | More data may help |
+| Both scores stabilize close together | Model performance may have converged |
+
+**Learning curve results:** To be added after executing `python src/learning_analysis.py` and reviewing the generated plot.
+
+Expected visualization:
+
+```text
+models/learning_curve.png
+```
+
+---
+
+# Installation and Execution
+
+## 1. Clone the Repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/Shubh823/RetailMind_AI.git
+
 cd RetailMind_AI
 ```
 
-### Step 2: Create a Virtual Environment
+## 2. Create Virtual Environment
 
 ```bash
 python -m venv .venv
 ```
 
-Activate on Windows PowerShell:
+Activate it on Windows:
 
 ```powershell
-.venv\Scripts\Activate.ps1
+.venv\Scripts\activate
 ```
 
-### Step 3: Install Dependencies
+## 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 4: Download the Dataset
+## 4. Dataset Setup
 
-Download the Telco Customer Churn dataset from Kaggle and place the CSV directly inside the `data/` folder.
+Place the Kaggle dataset inside:
 
-### Step 5: Run Exploratory Data Analysis
-
-```bash
-python pipeline/churn_analysis.py
+```text
+data/WA_Fn-UseC_-Telco-Customer-Churn.csv
 ```
 
-### Step 6: Test Shared Preprocessing
+## 5. Run Exploratory Data Analysis
 
 ```bash
-python src/preprocessing.py
+python notebooks/churn_analysis.py
 ```
 
-### Step 7: Train Day 1 Baseline
+## 6. Run Baseline Model
 
 ```bash
 python src/train.py
 ```
 
-### Step 8: Run Day 2 Model Comparison
-
-```bash
-python src/compare_models.py
-```
-
-### Step 9: Generate Customer Predictions
+## 7. Run Prediction
 
 ```bash
 python src/predict.py
 ```
 
+## 8. Compare Models
+
+```bash
+python src/compare_models.py
+```
+
+## 9. Run Hyperparameter Tuning
+
+```bash
+python src/tune_models.py
+```
+
+## 10. Run Learning Curve Analysis
+
+```bash
+python src/learning_analysis.py
+```
+
 ---
 
-## 12. Current Project Status
+# Project Progress
 
-| Increment | Implementation | Status |
+| Day | Activities | Status |
 |---|---|---|
-| Day 1 | Repository setup and EDA | Completed |
-| Day 1 | Preprocessing and Logistic Regression | Completed |
-| Day 1 | Model evaluation and Joblib persistence | Completed |
-| Day 1 | Prediction helper | Completed |
-| Day 2 | Shared preprocessing module | Completed |
-| Day 2 | Decision Tree, Random Forest and SVM | Completed |
-| Day 2 | Model comparison and champion selection | Completed |
-| Day 2 | README documentation | Completed |
-| Day 3 | Hyperparameter tuning | Upcoming |
-| Day 3 | Bias-variance analysis | Upcoming |
-| Day 3 | Learning curves and tuned champion | Upcoming |
+| Day 1 | EDA, preprocessing, Logistic Regression baseline, prediction pipeline | Completed |
+| Day 2 | Decision Tree, Random Forest, SVM model comparison | Completed |
+| Day 3 | GridSearchCV, hyperparameter tuning, champion selection | Completed |
+| Day 3 | Learning curve and bias-variance analysis | Pending final visualization review |
 
 ---
 
-## 13. Future Enhancements
+## Future Enhancements
 
-- Hyperparameter optimisation using GridSearchCV.
-- Cross-validation for reliable model evaluation.
-- Bias and variance diagnosis.
-- Learning curve analysis.
-- Improved churn recall and model generalisation.
-- FastAPI-based ML service.
-- Interactive customer churn dashboard.
+- Experiment with additional classification algorithms.
+- Improve churn recall through class weighting and threshold optimization.
+- Perform feature importance analysis.
+- Experiment with ensemble learning.
+- Build a REST API using FastAPI.
+- Develop a customer churn prediction dashboard.
+- Monitor model performance and data drift.
 
 ---
 
-## 14. Author and Project Information
+## Author
 
-**Project:** RetailMind AI
+**Shubham Patil**
 
-**Domain:** Machine Learning / Customer Analytics
+GitHub: [Shubh823](https://github.com/Shubh823)
 
-**Learning Track:** LTM AI Services
+---
 
-**Dataset:** Telco Customer Churn – Kaggle
-
-This project is developed incrementally, with each implementation extending the same RetailMind AI codebase into a more complete and reusable Machine Learning platform.
+*RetailMind AI – Turning customer data into actionable churn predictions.*
