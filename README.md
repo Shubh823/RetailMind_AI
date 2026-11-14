@@ -928,8 +928,68 @@ Initial Binary Mask
 OpenCV GrabCut Refinement
     ↓
 Final Product Mask
+```
 
 
+# Day 9 – LSTM Demand Forecasting
+
+## Objective
+
+Day 9 extends RetailMind AI into time-series demand forecasting.
+
+The objective is to use historical product sales data to train an LSTM model that can predict future product demand. These forecasts can later support inventory planning by helping estimate how much stock may be required.
+
+
+## Dataset
+
+**Dataset:** Store Item Demand Forecasting Challenge
+
+**Source:** Kaggle – Store Item Demand Forecasting Challenge
+
+The dataset contains historical daily sales information for multiple stores and products.
+
+Important columns used in this increment:
+
+| Column | Description |
+|---|---|
+| date | Date of the sales record |
+| store | Store identifier |
+| item | Product/item identifier |
+| sales | Number of items sold |
+
+The dataset is stored as:
+
+```text
+data/train.csv
+```
+
+
+
+# Day 10 – Seq2Seq & Attention Forecasting
+
+## Objective
+
+Extend the Day 9 LSTM demand forecasting module to multi-step forecasting using a Sequence-to-Sequence (Seq2Seq) model with Attention.
+
+The objective is to predict multiple future demand values together and provide a longer forecasting horizon for inventory and procurement planning.
+
+Day 9 predicts the next demand value, while Day 10 predicts several future demand values from the same historical sales sequence.
+
+---
+
+## Dataset
+
+**Dataset:** Store Item Demand Forecasting Challenge
+
+**Source:** Kaggle – Store Item Demand Forecasting Challenge
+
+Day 10 reuses the same sales dataset used in Day 9.
+
+The dataset is stored at:
+
+```text
+data/train.csv
+```
 
 
 
