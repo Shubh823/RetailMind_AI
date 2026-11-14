@@ -992,6 +992,40 @@ data/train.csv
 ```
 
 
+# Day 11 – GANs & VAEs – Image Augmentation
+
+## Objective
+
+Extend the RetailMind AI computer vision pipeline by generating synthetic product images for under-represented product categories.
+
+Day 11 uses a Variational Autoencoder (VAE) to learn patterns from images belonging to a rare product category and generate additional synthetic images.
+
+The purpose is to reduce category imbalance and provide additional training samples that can later be used by the Day 6/7 image classification models.
+
+---
+
+## Dataset
+
+**Dataset:** Fashion Product Images Small
+
+**Source:** Kaggle – Fashion Product Images Small
+
+Day 11 reuses the same fashion product dataset used in the earlier computer vision modules.
+
+The dataset contains:
+
+- Product images stored inside the `images/` directory.
+- `styles.csv` containing product metadata.
+- Product category information available through the `masterCategory` column.
+
+The dataset is stored as:
+
+```text
+data/
+├── styles.csv
+└── images/
+```
+
 
 
 # Installation and Execution
@@ -1080,6 +1114,9 @@ python src/learning_analysis.py
 | Day 6 | CNN-based fashion product image classification | Completed |
 | Day 7 | VGG16 transfer learning and fine-tuning | Completed |
 | Day 8 | Product segmentation, background removal, Grad-CAM explainability and end-to-end CV integration | Completed |
+| Day 9 | LSTM-based time-series demand forecasting | Completed |
+| Day 10 | Seq2Seq multi-step demand forecasting with Attention | Completed |
+| Day 11 | VAE-based synthetic product image generation and rare-category augmentation | Completed |
 
 
 ---
